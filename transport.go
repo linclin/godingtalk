@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -43,7 +44,6 @@ func (c *DingTalkClient) httpRequest(path string, params url.Values, requestData
 	client := c.HTTPClient
 	var request *http.Request
 	url2 := ROOT + path + "?" + params.Encode()
-	// log.Println(url2)
 	if requestData != nil {
 		switch requestData.(type) {
 		case UploadFile:
@@ -68,12 +68,12 @@ func (c *DingTalkClient) httpRequest(path string, params url.Values, requestData
 			request.Header.Set("Content-Type", w.FormDataContentType())
 		default:
 			d, _ := json.Marshal(requestData)
-			// log.Printf("url: %s request: %s", url2, string(d))
+			log.Printf("url: %s request: %s", url2, string(d))
 			request, _ = http.NewRequest("POST", url2, bytes.NewReader(d))
 			request.Header.Set("Content-Type", typeJSON)
 		}
 	} else {
-		// log.Printf("url: %s", url2)
+		log.Printf("url: %s", url2)
 		request, _ = http.NewRequest("GET", url2, nil)
 	}
 	resp, err := client.Do(request)
@@ -91,7 +91,6 @@ func (c *DingTalkClient) httpRequest(path string, params url.Values, requestData
 	pos := len(typeJSON)
 	if len(contentType) >= pos && contentType[0:pos] == typeJSON {
 		content, err := ioutil.ReadAll(resp.Body)
-		//log.Println(string(content))
 		if err == nil {
 			json.Unmarshal(content, responseData)
 			return responseData.checkError()

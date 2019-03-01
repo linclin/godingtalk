@@ -6,17 +6,16 @@ type DataMessage struct {
 	Data string
 }
 
-
-//Encrypt is 服务端加密 
+//Encrypt is 服务端加密
 func (c *DingTalkClient) Encrypt(str string) (string, error) {
 	var data DataMessage
 	request := map[string]interface{}{
-		"data":  str,
+		"data": str,
 	}
 	err := c.httpRPC("encryption/encrypt", nil, request, &data)
-    if err!=nil {
-        return "", err
-    }
+	if err != nil {
+		return "", err
+	}
 	return data.Data, nil
 }
 
@@ -24,11 +23,11 @@ func (c *DingTalkClient) Encrypt(str string) (string, error) {
 func (c *DingTalkClient) Decrypt(str string) (string, error) {
 	var data DataMessage
 	request := map[string]interface{}{
-		"data":  str,
+		"data": str,
 	}
 	err := c.httpRPC("encryption/decrypt", nil, request, &data)
-    if err!=nil {
-        return "", err
-    }
-	return data.Data, nil    
+	if err != nil {
+		return "", err
+	}
+	return data.Data, nil
 }

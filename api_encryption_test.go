@@ -6,9 +6,9 @@ import (
 
 func TestEncryption(t *testing.T) {
 	str, err := c.Encrypt("Hello")
-    if err!=nil {
-        t.Error(err)
-    } else {
-        t.Log(str)
-    }
+	if err != nil {
+		t.Error(err)
+	} else {
+		t.Log(str)
+	}
 }

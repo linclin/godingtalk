@@ -5,7 +5,8 @@ import (
 )
 
 //SendRobotTextMessage can send a text message to a group chat
-func (c *DingTalkClient) SendRobotTextMessage(accessToken string, msg string) (data MessageResponse, err error) {
+func (c *DingTalkClient) SendRobotTextMessage(accessToken string, msg string) error {
+	var data OAPIResponse
 	params := url.Values{}
 	params.Add("access_token", accessToken)
 	request := map[string]interface{}{
@@ -14,6 +15,22 @@ func (c *DingTalkClient) SendRobotTextMessage(accessToken string, msg string) (d
 			"content": msg,
 		},
 	}
-	err = c.httpRPC("robot/send", params, request, &data)
-	return data, err
+	err := c.httpRPC("robot/send", params, request, &data)
+	return err
+}
+
+//SendRobotMarkdownMessage can send a Markdown message to a group chat
+func (c *DingTalkClient) SendRobotMarkdownMessage(accessToken string, title, text string) error {
+	var data OAPIResponse
+	params := url.Values{}
+	params.Add("access_token", accessToken)
+	request := map[string]interface{}{
+		"msgtype": "markdown",
+		"markdown": map[string]interface{}{
+			"title": title,
+			"text":  text,
+		},
+	}
+	err := c.httpRPC("robot/send", params, request, &data)
+	return err
 }

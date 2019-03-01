@@ -55,19 +55,6 @@ func (data *OAPIResponse) getWriter() io.Writer {
 	return nil
 }
 
-//MessageResponse is
-type MessageResponse struct {
-	OAPIResponse
-	MessageID string `json:"messageId"`
-}
-
-//MessageResponse is
-type MessageReadListResponse struct {
-	OAPIResponse
-	NextCursor     int64    `json:"next_cursor"`
-	ReadUserIdList []string `json:"readUserIdList"`
-}
-
 //AccessTokenResponse is
 type AccessTokenResponse struct {
 	OAPIResponse
