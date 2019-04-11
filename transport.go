@@ -75,24 +75,16 @@ func (c *DingTalkClient) httpRequest(path string, params url.Values, requestData
 			request.Header.Set("Content-Type", w.FormDataContentType())
 		default:
 			d, _ := json.Marshal(requestData)
-<<<<<<< HEAD
-			log.Printf("url: %s request: %s", url2, string(d))
-=======
 			if DEBUG {
 				log.Printf("url: %s request: %s", url2, string(d))
 			}
->>>>>>> gitlab/master
 			request, _ = http.NewRequest("POST", url2, bytes.NewReader(d))
 			request.Header.Set("Content-Type", typeJSON)
 		}
 	} else {
-<<<<<<< HEAD
-		log.Printf("url: %s", url2)
-=======
 		if DEBUG {
 			log.Printf("url: %s", url2)
 		}
->>>>>>> gitlab/master
 		request, _ = http.NewRequest("GET", url2, nil)
 	}
 	resp, err := client.Do(request)
@@ -112,12 +104,9 @@ func (c *DingTalkClient) httpRequest(path string, params url.Values, requestData
 	pos := len(typeJSON)
 	if len(contentType) >= pos && contentType[0:pos] == typeJSON {
 		content, err := ioutil.ReadAll(resp.Body)
-<<<<<<< HEAD
-=======
 		if DEBUG {
 			log.Println(string(content))
 		}
->>>>>>> gitlab/master
 		if err == nil {
 			json.Unmarshal(content, responseData)
 			return responseData.checkError()

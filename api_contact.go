@@ -147,5 +147,4 @@ func (c *DingTalkClient) DepartmentChildIds(departmentID int) (DepartmentChild, 
 	params.Add("id", fmt.Sprintf("%d", departmentID))
 	err := c.httpRPC("department/list_ids", params, nil, &data)
 	return data, err
-	return data.UserID, err
 }
