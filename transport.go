@@ -10,6 +10,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
 )
 
 const typeJSON = "application/json"
@@ -43,12 +44,17 @@ func (c *DingTalkClient) httpRPC(path string, params url.Values, requestData int
 func (c *DingTalkClient) httpRequest(path string, params url.Values, requestData interface{}, responseData Unmarshallable) error {
 	client := c.HTTPClient
 	var request *http.Request
-	url2 := ROOT + path + "?" + params.Encode()
+	ROOT := os.Getenv("oapi_server")
+	if ROOT == "" {
+		ROOT = "oapi.dingtalk.com"
+	}
+	DEBUG := os.Getenv("debug") != ""
+	url2 := "https://" + ROOT + "/" + path + "?" + params.Encode()
+	// log.Println(url2)
 	if requestData != nil {
 		switch requestData.(type) {
 		case UploadFile:
 			var b bytes.Buffer
-			request, _ = http.NewRequest("POST", url2, &b)
 			w := multipart.NewWriter(&b)
 
 			uploadFile := requestData.(UploadFile)
@@ -65,15 +71,28 @@ func (c *DingTalkClient) httpRequest(path string, params url.Values, requestData
 			if err = w.Close(); err != nil {
 				return err
 			}
+			request, _ = http.NewRequest("POST", url2, &b)
 			request.Header.Set("Content-Type", w.FormDataContentType())
 		default:
 			d, _ := json.Marshal(requestData)
+<<<<<<< HEAD
 			log.Printf("url: %s request: %s", url2, string(d))
+=======
+			if DEBUG {
+				log.Printf("url: %s request: %s", url2, string(d))
+			}
+>>>>>>> gitlab/master
 			request, _ = http.NewRequest("POST", url2, bytes.NewReader(d))
 			request.Header.Set("Content-Type", typeJSON)
 		}
 	} else {
+<<<<<<< HEAD
 		log.Printf("url: %s", url2)
+=======
+		if DEBUG {
+			log.Printf("url: %s", url2)
+		}
+>>>>>>> gitlab/master
 		request, _ = http.NewRequest("GET", url2, nil)
 	}
 	resp, err := client.Do(request)
@@ -87,10 +106,18 @@ func (c *DingTalkClient) httpRequest(path string, params url.Values, requestData
 
 	defer resp.Body.Close()
 	contentType := resp.Header.Get("Content-Type")
-	//log.Printf("url: %s response content type: %s", url2, contentType)
+	if DEBUG {
+		log.Printf("url: %s response content type: %s", url2, contentType)
+	}
 	pos := len(typeJSON)
 	if len(contentType) >= pos && contentType[0:pos] == typeJSON {
 		content, err := ioutil.ReadAll(resp.Body)
+<<<<<<< HEAD
+=======
+		if DEBUG {
+			log.Println(string(content))
+		}
+>>>>>>> gitlab/master
 		if err == nil {
 			json.Unmarshal(content, responseData)
 			return responseData.checkError()

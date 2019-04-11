@@ -3,6 +3,7 @@ package godingtalk
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 var c *DingTalkClient
@@ -12,6 +13,18 @@ func init() {
 	err := c.RefreshAccessToken()
 	if err != nil {
 		panic(err)
+	}
+}
+
+func TestCalendarListApi(t *testing.T) {
+	from := time.Now().AddDate(0, 0, -1)
+	to := time.Now().AddDate(0, 0, 1)
+	events, err := c.ListEvents("0420506555", from, to)
+	if err != nil {
+		panic(err)
+	}
+	for _, event := range events {
+		t.Logf("%v %v %v %v", event.Start, event.End, event.Summary, event.Description)
 	}
 }
 
@@ -33,7 +46,7 @@ func TestDepartmentApi(t *testing.T) {
 
 	for _, department := range departments.Departments {
 		t.Logf("dept: %v", department)
-		list, err := c.UserList(department.Id)
+		list, err := c.UserList(department.Id, 0, 100)
 		if err != nil {
 			t.Error(err)
 		}
@@ -130,6 +143,16 @@ func TestVoiceMessage(t *testing.T) {
 
 func TestRobotMessage(t *testing.T) {
 	err := c.SendRobotTextMessage("b7e4b04c66b5d53669affb0b92cf533b9eff9b2bc47f86ff9f4227a2ba73798e", "这是一条测试消息")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+
+func TestRobotAtMessage(t *testing.T) {
+	err := c.SendRobotTextAtMessage("b7e4b04c66b5d53669affb0b92cf533b9eff9b2bc47f86ff9f4227a2ba73798e", "这是一条测试消息", &RobotAtList{
+		IsAtAll: true,
+	})
 	if err != nil {
 		t.Error(err)
 	}

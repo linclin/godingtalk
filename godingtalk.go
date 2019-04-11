@@ -11,10 +11,7 @@ import (
 
 const (
 	//VERSION is SDK version
-	VERSION = "0.1"
-
-	//ROOT is the root url
-	ROOT = "https://oapi.dingtalk.com/"
+	VERSION = "0.2"
 )
 
 //DingTalkClient is the Client to access DingTalk Open API
@@ -22,6 +19,7 @@ type DingTalkClient struct {
 	CorpID      string
 	CorpSecret  string
 	AgentID     string
+	PartnerID   string
 	AccessToken string
 	HTTPClient  *http.Client
 	Cache       Cache
