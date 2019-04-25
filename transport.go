@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -42,6 +43,11 @@ func (c *DingTalkClient) httpRPC(path string, params url.Values, requestData int
 }
 
 func (c *DingTalkClient) httpRequest(path string, params url.Values, requestData interface{}, responseData Unmarshallable) error {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println("httpRequest Panic error:", err)
+		}
+	}()
 	client := c.HTTPClient
 	var request *http.Request
 	ROOT := os.Getenv("oapi_server")
