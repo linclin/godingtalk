@@ -4,8 +4,7 @@ import "time"
 
 type Event struct {
 	OAPIResponse
-	Id          int64
-	UUID        string `json:"unique_id"`
+	Id          string
 	Location    string
 	Summary     string
 	Description string
@@ -19,45 +18,42 @@ type Event struct {
 
 type ListEventsResponse struct {
 	OAPIResponse
-	Result struct {
-		OAPIResponse
-		Data struct {
-			Events []Event `json:"items"`
-		} `json:"result"`
+	Success bool `json:"success"`
+	Result  struct {
+		Events        []Event `json:"items"`
+		Summary       string  `json:"summary"`
+		NextPageToken string  `json:"next_page_token"`
 	} `json:"result"`
 }
-
 type CalendarTime struct {
 	TimeZone string `json:"time_zone"`
-	Date     string `json:"date"`
+	Date     string `json:"date_time"`
 }
 
 type CalendarRequest struct {
 	TimeMax CalendarTime `json:"time_max"`
 	TimeMin CalendarTime `json:"time_min"`
-	StaffId string       `json:"staff_id"`
+	StaffId string       `json:"user_id"`
 }
 
 func (c *DingTalkClient) ListEvents(staffid string, from time.Time, to time.Time) (events []Event, err error) {
 	location := time.Now().Location().String()
 	timeMin := CalendarTime{
 		TimeZone: location,
-		Date:     from.Format("2006-01-02"),
+		Date:     from.Format("2006-01-02T15:04:05Z0700"),
 	}
 	timeMax := CalendarTime{
 		TimeZone: location,
-		Date:     to.Format("2006-01-02"),
+		Date:     to.Format("2006-01-02T15:04:05Z0700"),
 	}
 
-	data := map[string]CalendarRequest{
-		"open_calendar_list_request": CalendarRequest{
-			TimeMax: timeMax,
-			TimeMin: timeMin,
-			StaffId: staffid,
-		},
+	data := CalendarRequest{
+		TimeMax: timeMax,
+		TimeMin: timeMin,
+		StaffId: staffid,
 	}
 	var resp ListEventsResponse
 	err = c.httpRPC("topapi/calendar/list", nil, data, &resp)
-	events = resp.Result.Data.Events
+	events = resp.Result.Events
 	return events, err
 }
